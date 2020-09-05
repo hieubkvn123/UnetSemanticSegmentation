@@ -86,8 +86,7 @@ for i, img in enumerate(testing_images):
     label = cv2.resize(label, (OUTPUT_SHAPE[0], OUTPUT_SHAPE[1]))
 
     prediction = model.predict(np.array([img]))[0]
-    prediction = (prediction > 0.5).astype(np.uint8)[:,:,1]
-    print(prediction)
+    prediction = np.argmax(prediction, axis=2)
 
     ax[i][0].imshow(img)
     ax[i][0].set_title("Input")
