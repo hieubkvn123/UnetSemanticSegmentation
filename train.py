@@ -15,6 +15,7 @@ from tensorflow.keras import backend as K
 net = TinyUnet(num_classes=2)
 model = net.get_model()
 fig, ax = plt.subplots(3,3, figsize=(15,15))
+fig_, ax_ = plt.subplots(1,2, figsize=(10, 5))
 
 testing_images = ['000e218f21.png', '2c707479f9.png', '589e94265a.png']
 
@@ -60,6 +61,7 @@ for (dir, dirs, files) in os.walk(DATA_DIR):
 
 train_img = np.array(train_img)
 train_labels = tf.one_hot(np.array(train_labels), depth=2)
+### IOU is the typical metrics used to evaluate semantic segmentation model ###
 mean_iou = tf.keras.metrics.MeanIoU(num_classes=2)
 
 callbacks = [
@@ -69,7 +71,7 @@ callbacks = [
 
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[mean_iou])
-model.fit(train_img, train_labels, epochs=EPOCHS, validation_split=0.1, batch_size=BATCH_SIZE, callbacks=callbacks)
+history = model.fit(train_img, train_labels, epochs=EPOCHS, validation_split=0.1, batch_size=BATCH_SIZE, callbacks=callbacks)
 
 
 
@@ -97,4 +99,11 @@ for i, img in enumerate(testing_images):
     ax[i][2].imshow(prediction)
     ax[i][2].set_title("Prediction")
 
+ax_[0].plot(history.history['loss'], color='blue', label='Training loss')
+ax_[0].plot(history.history['val_loss'], color='orange', label='Validation loss')
+ax_[0].set_title("Model Loss")
+ax_[1].plot(history.history['mean_io_u'], color='blue', label='Training IOU')
+ax_[1].plot(history.history['val_mean_io_u'], color='orange', label='Validation IOU')
+ax_[1].set_title("Model IOU")
+plt.legend()
 plt.show()
