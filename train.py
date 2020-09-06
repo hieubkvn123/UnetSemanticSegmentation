@@ -11,7 +11,7 @@ from argparse import ArgumentParser
 
 from tensorflow.keras.layers import *
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, LearningRateScheduler
 from tensorflow.keras import backend as K
 
 parser = ArgumentParser()
@@ -79,14 +79,23 @@ train_img = np.array(train_img)
 train_labels = tf.one_hot(np.array(train_labels), depth=2)
 ### IOU is the typical metrics used to evaluate semantic segmentation model ###
 mean_iou = tf.keras.metrics.MeanIoU(num_classes=2)
+adam = Adam(lr=1e-3, beta_1=0.9, beta_2=0.999, amsgrad=True)
+
+def lr_decay(epochs, lr):
+    k = 0.9
+    if(epochs < 5):
+        return lr
+    else:
+        return lr * tf.math.exp(-0.1) 
 
 callbacks = [
     EarlyStopping(patience=15, verbose=1),
-    ModelCheckpoint(MODEL_CHECKPOINT, verbose=1, save_best_only=True)
+    ModelCheckpoint(MODEL_CHECKPOINT, verbose=1, save_best_only=True),
+    LearningRateScheduler(lr_decay)
+
 ]
 
-
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy', mean_iou])
+model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy', mean_iou])
 history = model.fit(train_img, train_labels, epochs=EPOCHS, validation_split=0.5, batch_size=BATCH_SIZE, callbacks=callbacks)
 
 
