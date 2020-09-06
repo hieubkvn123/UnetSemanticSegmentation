@@ -7,10 +7,19 @@ import matplotlib.pyplot as plt
 
 from model import Unet
 from tiny_model import TinyUnet
+from argparse import ArgumentParser
+
 from tensorflow.keras.layers import *
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras import backend as K
+
+parser = ArgumentParser()
+parser.add_argument('-i', '--iter', help='number of iterations', required=False)
+parser.add_argument('-b', '--batch', help='batch size', required=False)
+parser.add_argument('-n', '--num-train', help='number of training images', required=False)
+
+args = vars(parser.parse_args())
 
 net = TinyUnet(num_classes=2)
 model = net.get_model()
@@ -27,6 +36,13 @@ LABEL_DIR = 'data/masks'
 MODEL_CHECKPOINT = 'checkpoints/model.weights.hdf5'
 INPUT_SHAPE = (128, 128, 1)
 OUTPUT_SHAPE = (128,128, 2)
+
+if(args['iter']):
+    EPOCHS = args['iter']
+if(args['batch']):
+    BATCH_SIZE = args['batch']
+if(args['num-train']):
+    NUM_TRAIN_IMG = args['num-train']
 
 if(os.path.exists(MODEL_CHECKPOINT)):
     print('[INFO] Transfer learning from old checkpoints ... ')
