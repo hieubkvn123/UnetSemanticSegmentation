@@ -20,7 +20,7 @@ fig_, ax_ = plt.subplots(1,2, figsize=(10, 5))
 testing_images = ['000e218f21.png', '2c707479f9.png', '589e94265a.png']
 
 NUM_TRAIN_IMG=100
-BATCH_SIZE=32
+BATCH_SIZE=64
 EPOCHS=100 
 DATA_DIR = 'data/images'
 LABEL_DIR = 'data/masks'
