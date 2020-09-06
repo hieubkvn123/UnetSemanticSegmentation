@@ -20,7 +20,7 @@ fig_, ax_ = plt.subplots(1,2, figsize=(10, 5))
 testing_images = ['000e218f21.png', '2c707479f9.png', '589e94265a.png']
 
 NUM_TRAIN_IMG=100
-BATCH_SIZE=16
+BATCH_SIZE=32
 EPOCHS=100 
 DATA_DIR = 'data/images'
 LABEL_DIR = 'data/masks'
@@ -65,13 +65,13 @@ train_labels = tf.one_hot(np.array(train_labels), depth=2)
 mean_iou = tf.keras.metrics.MeanIoU(num_classes=2)
 
 callbacks = [
-    EarlyStopping(patience=5, verbose=1),
+    EarlyStopping(patience=15, verbose=1),
     ModelCheckpoint(MODEL_CHECKPOINT, verbose=1, save_best_only=True)
 ]
 
 
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[mean_iou])
-history = model.fit(train_img, train_labels, epochs=EPOCHS, validation_split=0.1, batch_size=BATCH_SIZE, callbacks=callbacks)
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy', mean_iou])
+history = model.fit(train_img, train_labels, epochs=EPOCHS, validation_split=0.5, batch_size=BATCH_SIZE, callbacks=callbacks)
 
 
 
@@ -102,8 +102,16 @@ for i, img in enumerate(testing_images):
 ax_[0].plot(history.history['loss'], color='blue', label='Training loss')
 ax_[0].plot(history.history['val_loss'], color='orange', label='Validation loss')
 ax_[0].set_title("Model Loss")
+ax_[0].set_facecolor('black')
+ax_[0].patch.set_facecolor('black')
+ax_[0].grid(color='green')
+ax_[0].legend()
+
 ax_[1].plot(history.history['mean_io_u'], color='blue', label='Training IOU')
 ax_[1].plot(history.history['val_mean_io_u'], color='orange', label='Validation IOU')
 ax_[1].set_title("Model IOU")
-plt.legend()
+ax_[1].set_facecolor("black")
+ax_[1].patch.set_facecolor('black')
+ax_[1].grid(color='green')
+ax_[1].legend()
 plt.show()
