@@ -17,7 +17,7 @@ from tensorflow.keras import backend as K
 parser = ArgumentParser()
 parser.add_argument('-i', '--iter', help='number of iterations', required=False)
 parser.add_argument('-b', '--batch', help='batch size', required=False)
-parser.add_argument('-n', '--num-train', help='number of training images', required=False)
+parser.add_argument('-n', '--num_train', help='number of training images', required=False)
 
 args = vars(parser.parse_args())
 
@@ -38,11 +38,11 @@ INPUT_SHAPE = (128, 128, 1)
 OUTPUT_SHAPE = (128,128, 2)
 
 if(args['iter']):
-    EPOCHS = args['iter']
+    EPOCHS = int(args['iter'])
 if(args['batch']):
-    BATCH_SIZE = args['batch']
-if(args['num-train']):
-    NUM_TRAIN_IMG = args['num-train']
+    BATCH_SIZE = int(args['batch'])
+if(args['num_train']):
+    NUM_TRAIN_IMG = int(args['num-train'])
 
 if(os.path.exists(MODEL_CHECKPOINT)):
     print('[INFO] Transfer learning from old checkpoints ... ')
